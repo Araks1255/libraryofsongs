@@ -11,13 +11,13 @@ func main() {
 	viper.SetConfigFile("./pkg/common/envs/.env")
 	viper.ReadInConfig()
 
-	port := viper.Get("PORT").(string)
+	port := viper.Get("PORT").(string) // Получение переменных среды
 	dbUrl := viper.Get("DB_URL").(string)
 
-	router := gin.Default()
-	db := db.Init(dbUrl)
+	router := gin.Default() // Инициализация роутера
+	db := db.Init(dbUrl) // И базы данных (самописным методом из пакета db)
 
-	songs.RegisterRoutes(router, db)
+	songs.RegisterRoutes(router, db) // Регистрируем роутеры функцией из пакета songs
 
-	router.Run(port)
+	router.Run(port) // Запускаем
 }

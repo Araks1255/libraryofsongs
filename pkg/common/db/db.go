@@ -9,13 +9,13 @@ import (
 )
 
 func Init(url string) *gorm.DB {
-	db, err := gorm.Open(postgres.Open(url), &gorm.Config{})
+	db, err := gorm.Open(postgres.Open(url), &gorm.Config{}) // Открытие бд по ссылке из аргумента
 
-	if err != nil {
+	if err != nil { // Обработка ошибок
 		log.Fatal(err)
 	}
 
-	db.AutoMigrate(&models.Song{})
+	db.AutoMigrate(&models.Song{}) // Создание таблицы в открытой бд по модели из пакета models
 
-	return db
+	return db // Возвращение открытой бд с таблицей
 }
