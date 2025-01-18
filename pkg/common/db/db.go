@@ -3,7 +3,6 @@ package db
 import (
 	"log"
 
-	"github.com/Araks1255/libraryofsongs"
 	"gorm.io/gorm"
 	"gorm.io/driver/postgres"
 )
