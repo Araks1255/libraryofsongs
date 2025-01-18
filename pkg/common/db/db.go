@@ -3,7 +3,7 @@ package db
 import (
 	"log"
 
-	//"gitub.com/Araks1255/libraryofsongs/pkg/common/models"
+	"github.com/Araks1255/libraryofsongs/pkg/common/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
