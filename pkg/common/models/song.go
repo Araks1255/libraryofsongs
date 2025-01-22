@@ -1,6 +1,9 @@
 package models
 
-import "gorm.io/gorm"
+import(
+	"gorm.io/gorm"
+	//"os"
+)
 
 type Song struct {
 	gorm.Model
@@ -9,4 +12,5 @@ type Song struct {
 	Album         string
 	Genre         string
 	YearOfRelease string
+	//File os.File
 }

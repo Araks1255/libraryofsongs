@@ -15,7 +15,7 @@ func main() {
 	dbUrl := viper.Get("DB_URL").(string)
 
 	router := gin.Default() // Инициализация роутера
-	db := db.Init(dbUrl) // И базы данных (самописным методом из пакета db)
+	db := db.Init(dbUrl)    // И базы данных (самописным методом из пакета db)
 
 	songs.RegisterRoutes(router, db) // Регистрируем роутеры функцией из пакета songs
 
