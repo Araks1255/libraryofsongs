@@ -19,6 +19,7 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) { // Функция регист
 	routes.GET("/:id", h.GetSong) // Обработка нужных запросов соответсвующими методами
 	routes.GET("/", h.GetSongs)
 	routes.GET("/albums/:band", h.GetAlbumsOfGroup)
+	routes.GET("bands/:genre", h.GetbandsByGenre)
 	routes.POST("/", h.AddSong)
 	routes.PUT("/:id", h.UpdateSong)
 	routes.DELETE("/:id", h.DeleteSong)
