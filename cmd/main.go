@@ -1,10 +1,12 @@
 package main
 
 import (
+	"log"
+
 	"github.com/Araks1255/libraryofsongs/pkg/common/db"
 	"github.com/Araks1255/libraryofsongs/pkg/songs"
-	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -15,7 +17,8 @@ func main() {
 	dbUrl := viper.Get("DB_URL").(string)
 
 	router := gin.Default() // Инициализация роутера
-	db := db.Init(dbUrl)    // И базы данных (самописным методом из пакета db)
+	db := db.Init(dbUrl) // И базы данных (самописным методом из пакета db)
+	log.Println(db)
 
 	songs.RegisterRoutes(router, db) // Регистрируем роутеры функцией из пакета songs
 

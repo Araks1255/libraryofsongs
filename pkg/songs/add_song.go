@@ -3,69 +3,78 @@ package songs
 import (
 	"log"
 	"mime/multipart"
-	"os"
 
 	"github.com/Araks1255/libraryofsongs/pkg/common/models"
 	"github.com/gin-gonic/gin"
 )
 
-type AddSongRequestBody struct { // Структура JSON тела POST запроса
-	Name          string `json:"name"`
-	Band          string `json:"band"`
-	Album         string `json:"album"`
-	Genre         string `json:"genre"`
-	YearOfRelease string `json:"yearOfRelease"`
-}
-
-func (h handler) AddSong(c *gin.Context) { // Хэндлер добавления песни
+func (h handler) AddSong(c *gin.Context) {
 	form, err := c.MultipartForm()
 	if err != nil {
 		c.AbortWithError(401, err)
-	}
-
-	file, err := c.FormFile("file")
-	if err != nil {
-		c.AbortWithError(401, err)
+		log.Println(err)
 		return
 	}
 
-	var song models.Song // Переменная для самой песни
-
-	MappingBodyToStruct(form, &song) // Запись данных из тела запроса в структуру песни
-
-	if path, err := CreateSongFile(song, file); err != nil {
+	if err := CreateSong(form, h); err != nil {
 		c.AbortWithError(401, err)
+	}
+
+	c.String(201, "До сюда не дойдёт")
+}
+
+func CreateSong(form *multipart.Form, h handler) error {
+	var genre models.Genre
+	genre.Name = form.Value["genre"][0]
+
+	var band models.Band
+	band.Name = form.Value["band"][0]
+
+	var album models.Album
+	album.Name = form.Value["album"][0]
+
+	var song models.Song
+	song.Name = form.Value["song"][0]
+
+	var createdGenre models.Genre
+	if result := h.DB.Create(&genre); result.Error != nil {
+		return result.Error
+	}
+	if result := h.DB.Raw("SELECT * FROM genres WHERE name = ?", genre.Name).Scan(&createdGenre); result.Error != nil {
+		log.Println(result.Error)
+		return result.Error
 	} else {
-		c.SaveUploadedFile(file, path)
+		band.GenreID = createdGenre.ID
+		log.Println("вах")
 	}
 
-	if result := h.DB.Create(&song); result.Error != nil { // Создание в бд созданной песни
-		c.AbortWithError(401, result.Error) // Обработка ошибок
+	var createdBand models.Band
+	if result := h.DB.Create(&band); result.Error != nil {
+		return result.Error
+	}
+	if result := h.DB.Raw("SELECT * FROM bands WHERE name = ?", band.Name).Scan(&createdBand); result.Error != nil {
+		log.Println(result.Error)
+		return result.Error
+	} else {
+		album.BandID = createdBand.ID
+		log.Println("вахх")
 	}
 
-	c.JSON(200, &song) // Отправка успешного статус-кода и структуры песни в виде JSONа
-}
-
-func MappingBodyToStruct(form *multipart.Form, song *models.Song) { // Функция записи тела запроса в объект структуры песни
-	song.Name = form.Value["name"][0]
-	song.Band = form.Value["band"][0]
-	song.Album = form.Value["album"][0]
-	song.Genre = form.Value["genre"][0]
-	song.YearOfRelease = form.Value["yearOfRelease"][0]
-}
-
-func CreateSongFile(song models.Song, file *multipart.FileHeader) (pathToEmptyFile string, err1 error) {
-	path := "H:/Мой диск/Проект Гоевый/Gin/libraryofsongs/songs/genres/" + song.Genre + "/" + song.Band + "/" + song.Album
-
-	if err := os.MkdirAll(path, 0755); err != nil {
-		log.Println(err)
-		return "", err
+	var createdAlbum models.Album
+	if result := h.DB.Create(&album); result.Error != nil {
+		return result.Error
+	}
+	if result := h.DB.Raw("SELECT * FROM albums WHERE name = ?", album.Name).Scan(&createdAlbum); result.Error != nil {
+		log.Println(result.Error)
+		return result.Error
+	} else {
+		song.AlbumID = createdAlbum.ID
+		log.Println("ваххх")
 	}
 
-	_, err := os.Create(path + "/" + song.Name + ".mp3")
-	if err != nil {
-		return "", err
+	if result := h.DB.Create(&song); result.Error != nil {
+		return result.Error
 	}
 
-	return path + "/" + song.Name + ".mp3", nil
+	return nil
 }

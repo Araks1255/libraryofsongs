@@ -1,16 +1,16 @@
 package models
 
-import(
+import (
 	"gorm.io/gorm"
-	//"os"
 )
 
 type Song struct {
 	gorm.Model
-	Name          string
-	Band          string
-	Album         string
-	Genre         string
-	YearOfRelease string
-	//File os.File
+	Name    string `gorm:"unique"`
+	AlbumID uint
+	Album   Album `gorm:"foreignKey:AlbumID;references:id"`
+	// Band          string
+	// Album         string
+	// Genre         string
+	// YearOfRelease string
 }
