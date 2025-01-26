@@ -8,19 +8,20 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h handler) AddSong(c *gin.Context) {
+func (h handler) CreateSong(c *gin.Context) {
 	form, err := c.MultipartForm()
 	if err != nil {
-		c.AbortWithError(401, err)
+		c.AbortWithStatusJSON(401, err)
 		log.Println(err)
 		return
 	}
 
 	if err := CreateSong(form, h); err != nil {
-		c.AbortWithError(401, err)
+		c.AbortWithStatusJSON(401, err)
+		return
 	}
 
-	c.String(201, "До сюда не дойдёт")
+	c.String(201, "Песня успешно создана")
 }
 
 func CreateSong(form *multipart.Form, h handler) error {
@@ -37,35 +38,30 @@ func CreateSong(form *multipart.Form, h handler) error {
 	song.Name = form.Value["song"][0]
 
 	var createdGenre models.Genre
-	if result := h.DB.Create(&genre); result.Error != nil {
+	if result := h.DB.Create(&genre); result.Error != nil && !IsRecordExists(result.Error, "genres") {
 		return result.Error
 	}
 	if result := h.DB.Raw("SELECT * FROM genres WHERE name = ?", genre.Name).Scan(&createdGenre); result.Error != nil {
-		log.Println(result.Error)
 		return result.Error
 	} else {
 		band.GenreID = createdGenre.ID
-		log.Println("вах")
 	}
 
 	var createdBand models.Band
-	if result := h.DB.Create(&band); result.Error != nil {
+	if result := h.DB.Create(&band); result.Error != nil && !IsRecordExists(result.Error, "bands") {
 		return result.Error
 	}
 	if result := h.DB.Raw("SELECT * FROM bands WHERE name = ?", band.Name).Scan(&createdBand); result.Error != nil {
-		log.Println(result.Error)
 		return result.Error
 	} else {
 		album.BandID = createdBand.ID
-		log.Println("вахх")
 	}
 
 	var createdAlbum models.Album
-	if result := h.DB.Create(&album); result.Error != nil {
+	if result := h.DB.Create(&album); result.Error != nil && !IsRecordExists(result.Error, "albums") {
 		return result.Error
 	}
 	if result := h.DB.Raw("SELECT * FROM albums WHERE name = ?", album.Name).Scan(&createdAlbum); result.Error != nil {
-		log.Println(result.Error)
 		return result.Error
 	} else {
 		song.AlbumID = createdAlbum.ID
@@ -77,4 +73,12 @@ func CreateSong(form *multipart.Form, h handler) error {
 	}
 
 	return nil
+}
+
+func IsRecordExists(err error, table string) bool {
+	if err.Error() == "ОШИБКА: повторяющееся значение ключа нарушает ограничение уникальности \"uni_"+table+"_name\" (SQLSTATE 23505)" {
+		return true
+	} else {
+		return false
+	}
 }

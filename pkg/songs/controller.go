@@ -16,5 +16,9 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) { // Функция регист
 
 	routes := r.Group("/songs") // Роутер группа на субдомене /songs для роутера из аргументов
 
-	routes.POST("/", h.AddSong)
+	routes.POST("/", h.CreateSong)
+	routes.GET("/:album", h.GetSongsFromAlbum)
+	routes.GET("/albums/:band", h.GetAlbumsOfBand)
+	routes.GET("/bands/:genre", h.GetBandsByGenre)
+	routes.GET("/genres", h.GetGenres)
 }
