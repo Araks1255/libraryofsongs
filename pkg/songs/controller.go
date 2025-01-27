@@ -21,4 +21,5 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) { // Функция регист
 	routes.GET("/albums/:band", h.GetAlbumsOfBand)
 	routes.GET("/bands/:genre", h.GetBandsByGenre)
 	routes.GET("/genres", h.GetGenres)
+	routes.GET("/song/:desiredSong", h.FindSong)
 }
