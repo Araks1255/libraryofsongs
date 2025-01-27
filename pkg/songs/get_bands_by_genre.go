@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h handler ) GetBandsByGenre(c *gin.Context) {
+func (h handler) GetBandsByGenre(c *gin.Context) {
 	genre := c.Param("genre")
 
 	var genreID uint

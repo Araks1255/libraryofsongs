@@ -26,16 +26,16 @@ func (h handler) CreateSong(c *gin.Context) { // Хэндлер создания
 }
 
 func CreateSong(form *multipart.Form, h handler) error { // Функция создания песни. Принимает мультипарт форму и хэндлер
-	var genre models.Genre              // Переменная для жанра
+	var genre models.Genre                               // Переменная для жанра
 	genre.Name = strings.ToLower(form.Value["genre"][0]) // Название жанра берём из формы под ключом genre
 
-	var band models.Band              // Группа
+	var band models.Band                               // Группа
 	band.Name = strings.ToLower(form.Value["band"][0]) // Название из формы
 
-	var album models.Album              // Альбом
+	var album models.Album                               // Альбом
 	album.Name = strings.ToLower(form.Value["album"][0]) // Название из формы
 
-	var song models.Song              // Песня
+	var song models.Song                               // Песня
 	song.Name = strings.ToLower(form.Value["song"][0]) // Название из формы
 
 	var genreID uint                                                                                   // Переменная для айди жанра
