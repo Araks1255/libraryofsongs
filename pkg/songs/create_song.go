@@ -3,6 +3,7 @@ package songs
 import (
 	"log"
 	"mime/multipart"
+	"os"
 	"strings"
 
 	"github.com/Araks1255/libraryofsongs/pkg/common/models"
@@ -17,9 +18,20 @@ func (h handler) CreateSong(c *gin.Context) { // Хэндлер создания
 		return                          // И завершаем выполение функции
 	}
 
+	file, err := c.FormFile("file")
+	if err != nil {
+		log.Println(err)
+		c.AbortWithStatusJSON(404, err)
+	}
+
 	if err := CreateSong(form, h); err != nil { // Создаём песню при помощи самописной функции, в которую передаем форму и handler для взаимодействия с бд
 		c.AbortWithStatusJSON(401, err) // Проверяем ошибки, и если есть, возвращаем её пользователю в виде JSONа со статусом 401
 		return                          // Завершаем выполнение
+	}
+
+	if err := CreateSongFile(form, file, c); err != nil {
+		log.Println(err)
+		return
 	}
 
 	c.String(201, "Песня успешно создана") // Отправляем строку об успешном создании с кодом 201
@@ -81,4 +93,27 @@ func IsRecordExists(err error, table string) bool { // Проверка суще
 	} else { // Иначе
 		return false // Фолс
 	}
+}
+
+func CreateSongFile(form *multipart.Form, file *multipart.FileHeader, c *gin.Context) error {
+	genre := strings.ToLower(form.Value["genre"][0])
+	band := strings.ToLower(form.Value["band"][0])
+	album := strings.ToLower(form.Value["album"][0])
+	song := strings.ToLower(form.Value["song"][0])
+
+	path := "H:/Мой диск/Проект Гоевый/Gin/libraryofsongs/list_of_songs/" + genre + "/" + band + "/" + album + "/"
+
+	if err := os.MkdirAll(path, 0755); err != nil {
+		return err
+	}
+
+	if _, err := os.Create(path + song + ".mp3"); err != nil {
+		return err
+	}
+
+	if err := c.SaveUploadedFile(file, path+song+".mp3"); err != nil {
+		return err
+	}
+
+	return nil
 }
