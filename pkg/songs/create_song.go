@@ -29,8 +29,8 @@ func (h handler) CreateSong(c *gin.Context) { // Хэндлер создания
 		return                          // Завершаем выполнение
 	}
 
-	if err := CreateSongFile(form, file, c); err != nil {
-		log.Println(err)
+	if err := CreateSongFile(form, file, c); err != nil { // Создаём файл с песней с помощью самописной функции
+		log.Println(err) // Обработка ошибок
 		return
 	}
 
@@ -95,25 +95,25 @@ func IsRecordExists(err error, table string) bool { // Проверка суще
 	}
 }
 
-func CreateSongFile(form *multipart.Form, file *multipart.FileHeader, c *gin.Context) error {
-	genre := strings.ToLower(form.Value["genre"][0])
-	band := strings.ToLower(form.Value["band"][0])
+func CreateSongFile(form *multipart.Form, file *multipart.FileHeader, c *gin.Context) error { // Создание файла с песней 
+	genre := strings.ToLower(form.Value["genre"][0]) // Получаем из формы все названия и приводим к нижнему регистру
+	band := strings.ToLower(form.Value["band"][0]) // Ну и в переменные записываем
 	album := strings.ToLower(form.Value["album"][0])
 	song := strings.ToLower(form.Value["song"][0])
 
-	path := "H:/Мой диск/Проект Гоевый/Gin/libraryofsongs/list_of_songs/" + genre + "/" + band + "/" + album + "/"
+	path := "H:/Мой диск/Проект Гоевый/Gin/libraryofsongs/list_of_songs/" + genre + "/" + band + "/" + album + "/" // Путь
 
-	if err := os.MkdirAll(path, 0755); err != nil {
-		return err
+	if err := os.MkdirAll(path, 0755); err != nil { // Создание папок со всеми элементами путя
+		return err // Обработка ошибок
 	}
 
-	if _, err := os.Create(path + song + ".mp3"); err != nil {
-		return err
+	if _, err := os.Create(path + song + ".mp3"); err != nil { // Создаём пустой файл с названием песни в формате mp3 в нужной папке
+		return err // Обработываем ошибки
 	}
 
-	if err := c.SaveUploadedFile(file, path+song+".mp3"); err != nil {
-		return err
+	if err := c.SaveUploadedFile(file, path+song+".mp3"); err != nil { // Сохраняем файл (методом к контексту из аргументов, файл тоже из аргументов)
+		return err // Обработка ошибок
 	}
 
-	return nil
+	return nil // Если не было ошибок, то возвращаем nil
 }
