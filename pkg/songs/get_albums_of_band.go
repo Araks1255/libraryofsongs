@@ -2,12 +2,13 @@ package songs
 
 import (
 	"log"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
 func (h handler) GetAlbumsOfBand(c *gin.Context) {
-	band := c.Param("band")
+	band := strings.ToLower(c.Param("band"))
 
 	var bandID uint
 

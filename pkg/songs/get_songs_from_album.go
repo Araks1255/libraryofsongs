@@ -2,12 +2,13 @@ package songs
 
 import (
 	"log"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
 func (h handler) GetSongsFromAlbum(c *gin.Context) {
-	album := c.Param("album")
+	album := strings.ToLower(c.Param("album"))
 
 	var albumID uint
 

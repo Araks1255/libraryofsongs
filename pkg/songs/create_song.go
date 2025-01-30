@@ -21,11 +21,11 @@ func (h handler) CreateSong(c *gin.Context) { // Хэндлер создания
 	file, err := c.FormFile("file")
 	if err != nil {
 		log.Println(err)
-		c.AbortWithStatusJSON(404, err)
+		c.AbortWithStatusJSON(422, err)
 	}
 
 	if err := CreateSong(form, h); err != nil { // Создаём песню при помощи самописной функции, в которую передаем форму и handler для взаимодействия с бд
-		c.AbortWithStatusJSON(401, err) // Проверяем ошибки, и если есть, возвращаем её пользователю в виде JSONа со статусом 401
+		c.AbortWithStatusJSON(422, err) // Проверяем ошибки, и если есть, возвращаем её пользователю в виде JSONа со статусом 401
 		return                          // Завершаем выполнение
 	}
 

@@ -2,12 +2,13 @@ package songs
 
 import (
 	"log"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
 func (h handler) GetBandsByGenre(c *gin.Context) {
-	genre := c.Param("genre")
+	genre := strings.ToLower(c.Param("genre"))
 
 	var genreID uint
 

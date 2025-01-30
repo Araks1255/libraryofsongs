@@ -34,5 +34,6 @@ func СomposeSong(song, album, band, genre string) (songMap map[string]string) {
 	songMap["album"] = album          // Ну и так далее
 	songMap["band"] = band
 	songMap["genre"] = genre
+
 	return songMap // Возвращаем получившуюся мапу
 }
