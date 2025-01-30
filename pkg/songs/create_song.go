@@ -8,9 +8,16 @@ import (
 
 	"github.com/Araks1255/libraryofsongs/pkg/common/models"
 	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 )
 
+var pathToList string
+
 func (h handler) CreateSong(c *gin.Context) { // Хэндлер создания песни
+	viper.SetConfigFile("./pkg/common/envs/.env")
+	viper.ReadInConfig()
+	pathToList = viper.Get("PATH_TO_LIST").(string)
+
 	form, err := c.MultipartForm() // Получение мультипарт формы из запроса
 	if err != nil {                // Проверка ошибок (вдркг кто-то JSON отправил)
 		c.AbortWithStatusJSON(401, err) // Если такой нашелся, то выкидываем его со статусом 401 и ошибкой в формате JSON
@@ -95,13 +102,13 @@ func IsRecordExists(err error, table string) bool { // Проверка суще
 	}
 }
 
-func CreateSongFile(form *multipart.Form, file *multipart.FileHeader, c *gin.Context) error { // Создание файла с песней 
+func CreateSongFile(form *multipart.Form, file *multipart.FileHeader, c *gin.Context) error { // Создание файла с песней
 	genre := strings.ToLower(form.Value["genre"][0]) // Получаем из формы все названия и приводим к нижнему регистру
-	band := strings.ToLower(form.Value["band"][0]) // Ну и в переменные записываем
+	band := strings.ToLower(form.Value["band"][0])   // Ну и в переменные записываем
 	album := strings.ToLower(form.Value["album"][0])
 	song := strings.ToLower(form.Value["song"][0])
 
-	path := "H:/Мой диск/Проект Гоевый/Gin/libraryofsongs/list_of_songs/" + genre + "/" + band + "/" + album + "/" // Путь
+	path := pathToList + genre + "/" + band + "/" + album + "/" // Путь
 
 	if err := os.MkdirAll(path, 0755); err != nil { // Создание папок со всеми элементами путя
 		return err // Обработка ошибок
