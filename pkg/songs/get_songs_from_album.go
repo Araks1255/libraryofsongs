@@ -10,30 +10,24 @@ import (
 func (h handler) GetSongsFromAlbum(c *gin.Context) { // Получение всех песен из альбома
 	album := strings.ToLower(c.Param("album")) // Берем из ссылки название альбома, приводим к нижнему регистру и записываем в переменную
 
-	var albumID uint // Объявляем переменную для хранения id альбома
+	var songs []string // Переменная для хранения найденных песен
 
-	if result := h.DB.Raw("SELECT id FROM albums WHERE name = ?", album).Scan(&albumID); result.Error != nil { // Ищем айди альбома с именем из ссылки и сканим в переменную
-		log.Println(result.Error) // Обработка ошибок
-		c.AbortWithStatusJSON(404, result.Error)
-		return
-	}
-
-	var songs []string // Переменная для хранения названий найденных песен
-
-	if result := h.DB.Raw("SELECT name FROM songs WHERE album_id = ?", albumID).Scan(&songs); result.Error != nil { // Берём из таблицы песен все названия, где айди альбома равен найденному ранее
+	if result := h.DB.Raw("SELECT songs.name FROM songs INNER JOIN albums ON songs.album_id = albums.id WHERE albums.name = ?", album).Scan(&songs); result.Error != nil { // Получаем все имена песен из таблицы песен, совмещаем с таблицей альбомов, и берём только те песни, айди жанра которых совпадает с айди жанра из ссылки
 		log.Println(result.Error) // Обрабатываем ошибки
-		c.AbortWithStatusJSON(404, result.Error)
+		c.AbortWithError(404, result.Error)
 		return
 	}
 
-	response := MakeResponse(songs) // Составляем ответ самописной функцией
-	c.JSON(200, response) // Отправляем его
+	response := ConvertToMap(songs) // Конвертируем срез найденных песен в мапу, где ключами будет порядковый номер в виде числа
+	c.JSON(200, response)           // Отправляем его
 }
 
-func MakeResponse(names []string) (response map[int]string) { // Функция создания ответа (в нескольких хэндлерах используется)
-	response = make(map[int]string) // Инициализируем мапу с целочисленными ключами и стринговыми значениями
-	for i := 0; i < len(names); i++ { // В цикле, зависящем от длины среза из аргументов
-		response[i+1] = names[i] // Приравниваем порядковый номер из ключа к значению под индексом массива из аргументов i
+func ConvertToMap(slice []string) map[int]string { // Самописная функция преобразования среза в мапу, создающая ключи в виде порядкового номера каждому элементу
+	resultingMap := make(map[int]string) // Инициализируем мапу
+
+	for i := 0; i < len(slice); i++ { // Цикл, длящийся столько, сколько элементов в срезе
+		resultingMap[i+1] = slice[i] // И записывающий каждый i элемент массива в мапу под ключом i+1
 	}
-	return response // Возвращаем созданную мапу
+
+	return resultingMap // Возвращаем мапу
 }

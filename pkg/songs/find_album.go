@@ -24,13 +24,13 @@ func (h handler) FindAlbum(c *gin.Context) { // Поиск альбома
 	}
 
 	response := ComposeAlbum(album, band, genre) // Составляем мапу с альбомом самописной функцией
-	c.JSON(200, response) // Отправляем 
+	c.JSON(200, response)                        // Отправляем
 }
 
 func ComposeAlbum(album, band, genre string) (albumMap map[string]string) { // Фунция составления мапы с альбомом
 	albumMap = make(map[string]string) // Инициализируеум мапу со стринговым всем
-	albumMap["album"] = album // Сохраняем значение переменной album из аргументов под ключом album
-	albumMap["band"] = band // Аналогично
+	albumMap["album"] = album          // Сохраняем значение переменной album из аргументов под ключом album
+	albumMap["band"] = band            // Аналогично
 	albumMap["genre"] = genre
 	return albumMap // Возвращаем эту мапу
 }

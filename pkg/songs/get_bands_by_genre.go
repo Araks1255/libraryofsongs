@@ -10,22 +10,14 @@ import (
 func (h handler) GetBandsByGenre(c *gin.Context) { // Получение групп по жанру
 	genre := strings.ToLower(c.Param("genre")) // Получение жанра из ссылки (и приведение к нижнему регистру)
 
-	var genreID uint // Переменная для айди найденного жанра
+	var bands []string // Срез стрингов для хранения найденных групп
 
-	if result := h.DB.Raw("SELECT id FROM genres WHERE name = ?", genre).Scan(&genreID); result.Error != nil { // Берем айди из таблицы genres, где название как в ссылке
+	if result := h.DB.Raw("SELECT bands.name FROM bands INNER JOIN genres ON bands.genre_id = genres.id WHERE genre.name = ?", genre).Scan(&bands); result.Error != nil { // Запись в этот срез всех групп, айди жанра которых совпадает с айди искомого жанра
 		log.Println(result.Error) // Обработка ошибок
 		c.AbortWithStatusJSON(404, result.Error)
 		return
 	}
 
-	var bands []string // Срез стрингов для названий альбомов
-
-	if result := h.DB.Raw("SELECT name FROM bands WHERE genre_id = ?", genreID).Scan(&bands); result.Error != nil { // Берем все названия из таблицы групп, где айди жанра как тот, что нашли ранее
-		log.Println(result.Error) // Обработка ошибок
-		c.AbortWithStatusJSON(404, result.Error)
-		return
-	}
-
-	response := MakeResponse(bands) // Создаём ответ 
-	c.JSON(200, response) // Отправляем его
+	response := ConvertToMap(bands) // Преобразуем срез в мапу
+	c.JSON(200, response)           // Отправляем её
 }
