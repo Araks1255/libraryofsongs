@@ -12,7 +12,7 @@ func (h handler) GetBandsByGenre(c *gin.Context) { // Получение гру�
 
 	var bands []string // Срез стрингов для хранения найденных групп
 
-	if result := h.DB.Raw("SELECT bands.name FROM bands INNER JOIN genres ON bands.genre_id = genres.id WHERE genre.name = ?", genre).Scan(&bands); result.Error != nil { // Запись в этот срез всех групп, айди жанра которых совпадает с айди искомого жанра
+	if result := h.DB.Raw("SELECT bands.name FROM bands INNER JOIN genres ON bands.genre_id = genres.id WHERE genres.name = ?", genre).Scan(&bands); result.Error != nil { // Запись в этот срез всех групп, айди жанра которых совпадает с айди искомого жанра
 		log.Println(result.Error) // Обработка ошибок
 		c.AbortWithStatusJSON(404, result.Error)
 		return
