@@ -18,7 +18,7 @@ func Init(url string) *gorm.DB {
 		log.Fatal(err)
 	}
 
-	db.AutoMigrate(&models.Song{}, &models.Album{}, &models.Band{}, &models.Genre{}) // Создание таблицы в открытой бд по модели из пакета models
+	db.AutoMigrate(&models.Song{}, &models.Album{}, &models.Band{}, &models.Genre{}) // Создание таблиц в открытой бд по модели из пакета models
 
 	return db // Возвращение открытой бд с таблицей
 }

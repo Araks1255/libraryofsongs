@@ -2,8 +2,7 @@ package models
 
 import "gorm.io/gorm"
 
-type Genre struct {
-	gorm.Model
-	Name string `gorm:"unique"`
-	//Bands []Band `gorm:"foreignKey:Name;references:Name"`
+type Genre struct { // Жанр
+	gorm.Model        // Тут из особых полей только название, остальное гормом создаётся автоматически (айди, время создания, удаления и т.д.)
+	Name       string `gorm:"unique"`
 }
