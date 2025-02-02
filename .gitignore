@@ -1,2 +1,5 @@
 /pkg/common/envs/
 /list_of_songs/
+/vendor/
+/go.mod
+/go.sum
