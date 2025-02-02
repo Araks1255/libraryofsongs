@@ -21,7 +21,7 @@ func (h handler) CreateSong(c *gin.Context) { // Хэндлер создания
 
 	form, err := c.MultipartForm() // Получение мультипарт формы из запроса
 	if err != nil {                // Проверка ошибок (вдркг кто-то JSON отправил)
-		c.AbortWithStatusJSON(401, err) // Если такой нашелся, то выкидываем его со статусом 401 и ошибкой в формате JSON
+		c.AbortWithStatusJSON(415, err) // Если такой нашелся, то выкидываем его со статусом 415 и ошибкой в формате JSON
 		log.Println(err)                // И в лог выводим
 		return                          // И завершаем выполение функции
 	}
