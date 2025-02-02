@@ -30,6 +30,7 @@ func (h handler) CreateSong(c *gin.Context) { // Хэндлер создания
 	if err != nil {                 // Проверка на ошибки
 		log.Println(err) // Обработка ошибок
 		c.AbortWithStatusJSON(422, err)
+		return
 	}
 
 	const numberOfGorutines uint8 = 2              // Переменная для хранения количества горутин (uint8 потому-что их не может быть меньше нуля и наврядли будет больше 255)
