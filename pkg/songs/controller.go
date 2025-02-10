@@ -14,10 +14,10 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) { // Функция регист
 		DB: db,
 	}
 
-	routes := r.Group("/songs") // Роутер группа на субдомене /songs для роутера из аргументов
+	routes := r.Group("/libraryofsongs") // Роутер группа на субдомене /songs для роутера из аргументов
 
 	// Get
-	routes.GET("/:album", h.GetSongsFromAlbum)
+	routes.GET("/songs/:album", h.GetSongsFromAlbum)
 	routes.GET("/albums/:band", h.GetAlbumsOfBand)
 	routes.GET("/bands/:genre", h.GetBandsByGenre)
 	routes.GET("/genres", h.GetGenres)
@@ -26,4 +26,10 @@ func RegisterRoutes(r *gin.Engine, db *gorm.DB) { // Функция регист
 	routes.GET("/song/:desiredSong", h.FindSong)
 	routes.GET("/album/:desiredAlbum", h.FindAlbum)
 	routes.GET("/band/:desiredBand", h.FindBand)
+	// Get (user)
+	user := routes.Group("/user/:user")
+	user.GET("/songs", h.GetSongsOfUser)
+	user.GET("/genres", h.GetGenresOfUser)
+	user.GET("/bands", h.GetBandsOfUser)
+	user.GET("/albums", h.GetAlbumsOfUser)
 }
